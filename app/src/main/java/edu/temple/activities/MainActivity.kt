@@ -1,5 +1,6 @@
 package edu.temple.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -18,14 +19,23 @@ class MainActivity : AppCompatActivity() {
         // Verify correctness by examining array values.
         val textSizes = Array(20){(it + 1) * 5}
 
+
+
+
         Log.d("Array values", textSizes.contentToString())
 
         with (findViewById<RecyclerView>(R.id.textSizeSelectorRecyclerView)) {
 
             // TODO Step 2: Implement lambda body to launch new activity and pass value
-            adapter = TextSizeAdapter(textSizes){
-
+            adapter = TextSizeAdapter(textSizes){size -> //can you "it" instead of size
+                val senderIntent = Intent(this@MainActivity,DisplayActivity::class.java)
+                senderIntent.putExtra("fontSize", size.toFloat())
+                startActivity(senderIntent)
             }
+
+//            recyclerView.adapter = NumberDisplayAdapter(numbers){size: Int ->
+//                displayTextView.textSize = size.toFloat()
+//
             layoutManager = LinearLayoutManager(this@MainActivity)
         }
 
@@ -36,12 +46,14 @@ class MainActivity : AppCompatActivity() {
 
 
 /* Convert to RecyclerView.Adapter */
-class TextSizeAdapter (private val textSizes: Array<Int>, callback: (Int)->Unit) : RecyclerView.Adapter<TextSizeAdapter.TextSizeViewHolder>() {
+class TextSizeAdapter (private val textSizes: Array<Int>, private val callback: (Int)->Unit) : RecyclerView.Adapter<TextSizeAdapter.TextSizeViewHolder>() {
 
     // TODO Step 1: Complete onClickListener to return selected number
     inner class TextSizeViewHolder(val textView: TextView) : RecyclerView.ViewHolder (textView) {
         init {
-            textView.setOnClickListener {  }
+            textView.setOnClickListener {
+                callback(textSizes[adapterPosition])
+            }
         }
     }
 
